@@ -17,3 +17,9 @@ from model.producto_importado import ProductoImportado
 from model.cotizacion_dolar import CotizacionDolar
 from model.detalle_venta import DetalleVenta
 from model.venta import Venta
+from model.servicio_cartelera_api import ServicioCarteleraAPI
+from model.sala import Sala
+from model.asistente_dulceria import AsistenteDulceriaCine
+
+
+

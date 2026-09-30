@@ -1,70 +1,88 @@
-# 🎬 CINEAPP - Sistema de Gestión de Cine
+# 🎬 CINEAPPMAKETA - Sistema de Gestión de Cine Avanzado (POO + API REST)
 
-**INACAP** - Programación Orientada a Objetos (TI3V21) - Sumativa N°2  
+**INACAP** - Programación Orientada a Objetos (TI3V21) - Evaluación Sumativa N°2  
 **Desarrolladores**: Luis Lugo & Equipo  
 
 ---
 
 ## 📋 Descripción del Proyecto
-CINEAPP es un sistema de gestión para un complejo de cines desarrollado en **Python** aplicando los principios de la **Programación Orientada a Objetos (POO)**. Permite administrar la venta de entradas, funciones (2D, 3D, VIP), productos de dulcería (nacionales e importados con cotización de moneda extranjera) y control de aforo y restricciones por edad.
+CINEAPPMAKETA es un sistema completo e interactivo de gestión para complejos de cine desarrollado en **Python 3** aplicando rigurosamente los principios de la **Programación Orientada a Objetos (POO)**.
+
+El sistema permite gestionar todo el flujo de ingreso de clientes, consulta de cartelera en vivo mediante **API REST pública (TMDB)**, compra de entradas por sala/asiento (matriz 5x6), validación de restricciones de edad con acompaño adulto, beneficios de clientes registrados y atención virtual en dulcería.
 
 ---
 
 ## 🏗️ Arquitectura y Estructura del Código
 
-El proyecto sigue una arquitectura modular donde cada clase se encuentra desacoplada en su propio archivo dentro del paquete `model/`:
+El código está organizado siguiendo el estándar modular de una clase por archivo en el paquete `model/`:
 
 ```text
-CINEAPP/
-├── main.py                     # Script principal de demostración y pruebas
-├── README.md                   # Documentación del proyecto
-└── model/                      # Módulo con las clases del sistema
-    ├── __init__.py             # Exposición centralizada de módulos
-    ├── cliente.py              # Clase Cliente con validación de datos
-    ├── empleado.py             # Clase base abstracta Empleado
-    ├── boletero.py             # Subclase Boletero (emisión de entradas y validación de reglas)
-    ├── encargado_dulceria.py   # Subclase EncargadoDulceria (gestión de ventas de dulcería)
-    ├── pelicula.py             # Clase Película (clasificación y restricciones)
-    ├── funcion.py              # Clase base Función (gestión de aforo y precios)
-    ├── funcion_2d.py           # Subtipo Función 2D
-    ├── funcion_3d.py           # Subtipo Función 3D (con recargo)
-    ├── funcion_vip.py          # Subtipo Función VIP (con recargo)
-    ├── item_vendible.py        # Interfaz/Base de ítems vendibles
+CINEAPPMAKETA/
+├── main.py                     # Sistema Interactivo CLI principal
+├── README.md                   # Documentación oficial del proyecto
+└── model/                      # Paquete con las clases del sistema
+    ├── __init__.py             # Exposición centralizada del módulo POO
+    ├── cliente.py              # Clase Cliente con encapsulamiento defensivo
+    ├── empleado.py             # Clase base abstracta Empleado (abc.ABC)
+    ├── boletero.py             # Subclase Boletero (emisión de entradas y reglas de negocio)
+    ├── encargado_dulceria.py   # Subclase EncargadoDulceria (atención y ventas de dulcería)
+    ├── asistente_dulceria.py   # 🤖 Asistente Virtual Interactivo de Dulcería
+    ├── pelicula.py             # Clase Película (clasificación y restricciones de edad)
+    ├── servicio_cartelera_api.py # 🌐 Servicio API REST para películas en taquilla
+    ├── sala.py                 # 🏛️ Clase Sala con mapa visual de 30 asientos (5x6) y formato
+    ├── funcion.py              # Clase base abstracta Función
+    ├── funcion_2d.py           # Subtipo Función 2D (con descuento para clientes registrados)
+    ├── funcion_3d.py           # Subtipo Función 3D (con recargo de lentes)
+    ├── funcion_vip.py          # Subtipo Función VIP (con recargo de confort)
+    ├── item_vendible.py        # Interfaz base para ítems vendibles
     ├── entrada.py              # Subtipo Entrada para cine
     ├── producto_dulceria.py    # Clase base para productos comestibles/snacks
-    ├── producto_nacional.py    # Producto en CLP
-    ├── producto_importado.py   # Producto en USD conversible mediante tasa
-    ├── cotizacion_dolar.py     # Clase de soporte para tasa de cambio en vivo/dinámica
-    ├── venta.py                # Clase Venta (transacción y comprobante)
-    ├── detalle_venta.py        # Detalle de ítem y cantidad
-    ├── edad_insuficiente_error.py # Excepción personalizada (Regla de negocio: restricción edad)
-    └── sala_llena_error.py     # Excepción personalizada (Regla de negocio: aforo lleno)
+    ├── producto_nacional.py    # Producto nacional en CLP
+    ├── producto_importado.py   # Producto importado en USD con conversión dinámica
+    ├── cotizacion_dolar.py     # Clase de soporte para indicador de tasa de cambio
+    ├── venta.py                # Clase Venta (transacción principal)
+    ├── detalle_venta.py        # Detalle de ítem y cantidad (Composición)
+    ├── edad_insuficiente_error.py # 🚫 Excepción del dominio (Regla de edad)
+    └── sala_llena_error.py     # 🚫 Excepción del dominio (Regla de aforo)
 ```
 
 ---
 
-## ✨ Características y Principios POO Aplicados
+## ✨ Principios POO y Características Implementadas
 
-1. **Polimorfismo**:
-   - `calcular_precio()` en las funciones `Funcion2D`, `Funcion3D` y `FuncionVIP`.
+1. **Polimorfismo Real**:
+   - `calcular_precio()` implementado de forma específica en `Funcion2D`, `Funcion3D` y `FuncionVIP`. Se invoca dinámicamente sin `if/isinstance`.
+
 2. **Encapsulamiento y Validaciones Defensivas**:
-   - Validación de edad de cliente, capacidad de sala y stock de productos en los setters.
-3. **Abstracción**:
-   - Clase abstracta `Empleado` que obliga la implementación del método `get_rol()`.
+   - Atributos privados (`_atributo`) expuestos con `@property` y `@setter`. Validaciones con `raise ValueError` para edades, precios y stock.
+
+3. **Abstracción & Interfaces**:
+   - Clases abstractas `Empleado`, `Funcion`, `ItemVendible` y `ProductoDulceria` con métodos abstractos obligatorios.
+
 4. **Reglas de Negocio con Excepciones Propias**:
-   - `EdadInsuficienteError`: Bloquea la venta de funciones con clasificación inapropiada para menores.
-   - `SalaLlenaError`: Evita sobreventas si la capacidad máxima de la sala fue alcanzada.
-5. **Conversión Dinámica de Monedas**:
-   - `CotizacionDolar` actualiza automáticamente el costo final en CLP de productos importados.
+   - `EdadInsuficienteError`: Bloquea venta a menores si no cumplen la edad mínima requerida.
+   - `SalaLlenaError`: Bloquea venta si la capacidad máxima de la sala fue alcanzada.
+
+5. **Relaciones POO**:
+   - **Composición**: `Venta` crea sus objetos `DetalleVenta` en su propio flujo.
+   - **Agregación**: `Funcion` recibe por parámetro una `Pelicula` creada externamente.
+
+6. **Integración API REST**:
+   - `ServicioCarteleraAPI` consulta la API de TMDB en tiempo real para obtener estrenos actuales y transformarlos dinámicamente en objetos `Pelicula`.
+
+7. **Funcionalidades de Experiencia de Usuario**:
+   - **Ingreso**: Tipo de acceso Invitado o Cliente Registrado (10% Dcto en entradas 2D).
+   - **Restricción de Edad**: Solicitud de acompañante adulto mayor de edad (+18) con compra automática de 2 entradas.
+   - **Cine de 10 Salas**: Salas clasificadas por formato (1-5 2D, 6-8 3D, 9-10 VIP) con mapa gráfico de asientos `[A1]` a `[E6]`.
+   - **Asistente Virtual de Dulcería**: Menú de palomitas (formatos y sabores), bebidas, extras y sugerencia de ventas cruzadas.
 
 ---
 
 ## 🚀 Cómo Ejecutar
 
-Requiere **Python 3.8+** (sin librerías externas adicionales).
+Requiere **Python 3.8+** (utiliza bibliotecas nativas `urllib` y `json`).
 
 ```bash
-# Ejecutar la demostración de funcionalidades y reglas del negocio
+# Ejecutar el sistema completo en la terminal
 python main.py
 ```
-
