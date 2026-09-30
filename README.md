@@ -1,12 +1,12 @@
-# 🎬 CINEAPPMAKETA - Sistema de Gestión de Cine Avanzado (POO + API REST)
+# 🎬 cineAPP - Sistema de Gestión de Cine Avanzado (POO + API REST)
 
 **INACAP** - Programación Orientada a Objetos (TI3V21) - Evaluación Sumativa N°2  
-**Desarrolladores**: Luis Lugo & Equipo  
+**Desarrolladores**: Luis Lugo & Debora Sepulveda  
 
 ---
 
 ## 📋 Descripción del Proyecto
-CINEAPPMAKETA es un sistema completo e interactivo de gestión para complejos de cine desarrollado en **Python 3** aplicando rigurosamente los principios de la **Programación Orientada a Objetos (POO)**.
+`cineAPP` es un sistema completo e interactivo de gestión para complejos de cine desarrollado en **Python 3** aplicando rigurosamente los principios de la **Programación Orientada a Objetos (POO)**.
 
 El sistema permite gestionar todo el flujo de ingreso de clientes, consulta de cartelera en vivo mediante **API REST pública (TMDB)**, compra de entradas por sala/asiento (matriz 5x6), validación de restricciones de edad con acompaño adulto, beneficios de clientes registrados y atención virtual en dulcería.
 

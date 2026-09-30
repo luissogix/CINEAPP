@@ -223,3 +223,4 @@ class SistemaCineCLI:
 if __name__ == "__main__":
     app = SistemaCineCLI()
     app.iniciar()
+
