@@ -81,6 +81,7 @@ CINEAPPMAKETA/
 ## 🚀 Cómo Ejecutar
 
 Requiere **Python 3.8+** (utiliza bibliotecas nativas `urllib` y `json`).
+*Nota: Se requiere conexión a Internet activa al iniciar para cargar la cartelera desde la API de TMDB.*
 
 ```bash
 # Ejecutar el sistema completo en la terminal
