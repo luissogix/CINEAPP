@@ -17,7 +17,7 @@ El sistema permite gestionar todo el flujo de ingreso de clientes, consulta de c
 El código está organizado siguiendo el estándar modular de una clase por archivo en el paquete `model/`:
 
 ```text
-CINEAPPMAKETA/
+CINEAPP/
 ├── main.py                     # Sistema Interactivo CLI principal
 ├── README.md                   # Documentación oficial del proyecto
 └── model/                      # Paquete con las clases del sistema
