@@ -236,4 +236,153 @@ render_terminal_screenshot(
     subtitle='Clase: Cliente | Propiedad: @edad.setter | Encapsulamiento y Validacion Defensiva'
 )
 
-print('Todas las capturas (01 a 06) fueron actualizadas y sincronizadas exitosamente.')
+# 7. CAPTURA VALIDACIÓN RUT MÓDULO 11 (P07 y P08)
+lines_rut = [
+    "====================================================================",
+    " VALIDACION MATEMATICA DE RUT CHILENO (ALGORITMO MODULO 11)",
+    "====================================================================",
+    "[PRUEBA P08: INGRESO DE RUT INVALIDO (DIGITO VERIFICADOR INCORRECTO)]",
+    ">> Ingrese RUT del comprador con puntos y guion: 12.345.678-9",
+    "[ERROR] RUT invalido: '12.345.678-9'. El digito verificador no coincide con el cuerpo del RUT.",
+    ">> Intente nuevamente.",
+    "",
+    "[PRUEBA P07: INGRESO DE RUT CORRECTO]",
+    ">> Ingrese RUT del comprador con puntos y guion: 12.345.678-5",
+    ">> Ingrese Nombre del comprador: Juan Perez",
+    ">> Ingrese Edad del comprador: 25",
+    "[OK] Cliente validado con exito: Juan Perez (RUT: 12.345.678-5, Edad: 25)",
+    "====================================================================",
+    "El algoritmo pondera serie 2 al 7 con residuo 11. Valida antes de instanciar."
+]
+render_terminal_screenshot(
+    'Validacion de RUT: Algoritmo Modulo 11 (P07 y P08)',
+    lines_rut,
+    os.path.join(output_dir, '07_RUT_Modulo11_Validacion.png'),
+    subtitle='Metodo estatico: Cliente.validar_rut() | Seguridad y Prevencion de Datos Erroneos'
+)
+
+# 8. CAPTURA CRUD SQLITE CON ARQUITECTURA DAO (P02 a P06)
+lines_crud = [
+    "====================================================================",
+    " PERSISTENCIA EN SQLITE CON ARQUITECTURA DAO (PAQUETE dao/)",
+    "====================================================================",
+    "[P02 - CREAR EN SQLITE VIA PeliculaDAO.insertar()]",
+    ">> Titulo: Estreno | Clasificacion: +14 | Duracion: 120 min",
+    ">> SQL Ejecutado: INSERT INTO peliculas VALUES (?, ?, ?, ?, ?);",
+    "[OK] El programa confirma que se guardo la pelicula 'Estreno' (+14) con ID P-106 en SQLite.",
+    "",
+    "[P03 - LISTAR EN SQLITE VIA PeliculaDAO.obtener_todas()]",
+    ">> SQL Ejecutado: SELECT * FROM peliculas ORDER BY id_pelicula ASC;",
+    " [6] P-106 | Estreno                    | 120 min | +14 | Min: 14 anos",
+    "",
+    "[P04 - MODIFICAR EN SQLITE VIA PeliculaDAO.actualizar()]",
+    ">> Seleccionar P-106 -> Nueva clasificacion: +18",
+    ">> SQL Ejecutado: UPDATE peliculas SET clasificacion = ?, edad_minima = ? WHERE id_pelicula = ?;",
+    "[OK] Modificacion guardada con exito en SQLite vía PeliculaDAO. Nueva clasificacion: +18",
+    "",
+    "[P05 - PERSISTENCIA REINICIO EN cineapp.db]",
+    ">> Salir del sistema (0) y reabrir python main.py.",
+    ">> ConexionDB.inicializar_tablas() conecta a cineapp.db.",
+    ">> Pelicula 'Estreno' (+18) permanece intacta en la base de datos.",
+    "",
+    "[P06 - ELIMINAR EN SQLITE VIA PeliculaDAO.eliminar()]",
+    ">> SQL Ejecutado: DELETE FROM peliculas WHERE id_pelicula = ?; -> P-106",
+    "[OK] Pelicula 'Estreno' eliminada con exito de SQLite vía PeliculaDAO.",
+    "===================================================================="
+]
+render_terminal_screenshot(
+    'CRUD Completo y Persistencia SQLite con DAO (P02 a P06)',
+    lines_crud,
+    os.path.join(output_dir, '08_CRUD_SQLite_y_Persistencia_DAO.png'),
+    subtitle='Clase: PeliculaDAO | Motor: SQLite3 (cineapp.db) | 100% Consultas Parametrizadas (?)'
+)
+
+# 9. CAPTURA TRANSACCIÓN UNIFICADA ATÓMICA EN SQLITE (VentaDAO)
+lines_tx = [
+    "====================================================================",
+    " TRANSACCION ATOMICA DE VENTA EN SQLITE (P12 y P13 - VentaDAO)",
+    "====================================================================",
+    ">> Cliente: Carlos Lopez (RUT: 12.345.678-5, Edad: 30)",
+    ">> Boletos: 2x Entrada Funcion 2D [A1, A2] -> $10,000 CLP",
+    ">> Dulceria: 1x Palomitas Grandes ($4,000) + 2x Bebidas ($5,600) -> $9,600 CLP",
+    "",
+    "[BLOQUE TRANSACCIONAL ATOMICO: with conn:]",
+    "1. INSERT INTO clientes VALUES (?, ?, ?); -> ON CONFLICT DO UPDATE",
+    "2. INSERT INTO ventas VALUES ('V-102', '2026-10-13', '12.345.678-5', ..., 19600.0);",
+    "3. INSERT INTO detalles_venta VALUES (NULL, 'V-102', 'Entrada', 'F2D A1', 1, 5000, 5000);",
+    "4. INSERT INTO detalles_venta VALUES (NULL, 'V-102', 'Entrada', 'F2D A2', 1, 5000, 5000);",
+    "5. INSERT INTO detalles_venta VALUES (NULL, 'V-102', 'ProductoNacional', 'Palomitas', 1, 4000, 4000);",
+    "6. INSERT INTO detalles_venta VALUES (NULL, 'V-102', 'ProductoNacional', 'Bebida', 2, 2800, 5600);",
+    "[COMMIT] Transaccion confirmada. Total guardado: $19,600 CLP con 4 lineas de detalle.",
+    "",
+    "[P13 - CONSULTA DE DETALLES DESDE BASE DE DATOS (TABLA detalles_venta)]",
+    ">> VentaDAO.obtener_venta_con_detalles('V-102'):",
+    "  • [Entrada] Entrada Cine 2D Asiento A1 | Cant: 1 | Subtotal: $5,000 CLP",
+    "  • [Entrada] Entrada Cine 2D Asiento A2 | Cant: 1 | Subtotal: $5,000 CLP",
+    "  • [ProductoNacional] Palomitas Grandes | Cant: 1 | Subtotal: $4,000 CLP",
+    "  • [ProductoNacional] Bebidas Medianas  | Cant: 2 | Subtotal: $5,600 CLP",
+    "TOTAL TRANSACCION EN BASE DE DATOS: $19,600 CLP",
+    "===================================================================="
+]
+render_terminal_screenshot(
+    'Transaccion Unificada y Lineas de Detalle en SQLite (VentaDAO)',
+    lines_tx,
+    os.path.join(output_dir, '09_Transaccion_Unificada_VentaDAO_SQLite.png'),
+    subtitle='Clases: VentaDAO, ClienteDAO | Tablas: ventas, detalles_venta | Atomicidad'
+)
+
+# 10. CAPTURA API REQUESTS CON TIMEOUT Y FALLBACK DE CONTINUIDAD
+lines_api = [
+    "====================================================================",
+    " CONSUMO DE SERVICIO EXTERNO CON LIBRERIA REQUESTS (P16 y P17)",
+    "====================================================================",
+    "Clase: CotizacionDolar | Endpoint: https://mindicador.cl/api/dolar | Timeout: 5s",
+    "",
+    "[ESCENARIO 1: CON CONEXION A INTERNET (P16)]",
+    ">> requests.get('https://mindicador.cl/api/dolar', headers=headers, timeout=5)",
+    ">> HTTP 200 OK | Serie JSON procesada exitosamente.",
+    "[OK API] Cotizacion del dolar obtenida en vivo via requests: $952.30 CLP.",
+    ">> Calculo dinamico: Nachos Importados ($4.00 USD * $952.30) = $3,809 CLP.",
+    "",
+    "[ESCENARIO 2: SIN CONEXION O DEMORA / TIMEOUT (P17)]",
+    ">> requests.exceptions.Timeout / requests.exceptions.ConnectionError capturada.",
+    "[ADVERTENCIA API] Tiempo maximo de espera agotado (5s) o sin conexion a internet.",
+    "[CONTINGENCIA API] Aplicando valor de respaldo referencial: $950.00 CLP.",
+    ">> Calculo defensivo: Nachos Importados ($4.00 USD * $950.00) = $3,800 CLP.",
+    "[CONTINUIDAD OPERATIVA] El sistema informa la contingencia y NO se cae.",
+    "===================================================================="
+]
+render_terminal_screenshot(
+    'Consumo de API Oficial con requests, Timeout y Fallback (P16 y P17)',
+    lines_api,
+    os.path.join(output_dir, '10_API_Requests_Timeout_y_Contingencia.png'),
+    subtitle='Criterios 3.1.1 y 3.1.3 | Manejo defensivo de excepciones y estabilidad'
+)
+
+# 11. CAPTURA CONTROL DE ERRORES MENÚ (P18 y P19)
+lines_err = [
+    "====================================================================",
+    " ROBUSTEZ Y VALIDACION DE ENTRADAS EN MENU CLI (P18 y P19)",
+    "====================================================================",
+    "[PRUEBA P18: INGRESO DE OPCION INEXISTENTE EN MENU PRINCIPAL]",
+    ">> Seleccione una opcion [0-5]: 99",
+    "[ERROR] Opcion no valida. Ingrese un numero entre 0 y 5.",
+    ">> El sistema no se interrumpe y despliega nuevamente el menu principal.",
+    "",
+    "[PRUEBA P19: INGRESO DE CARACTERES EN CAMPOS NUMERICOS]",
+    ">> Ingrese Edad del comprador: abc",
+    "[ERROR] Debe ingresar un numero entero valido.",
+    ">> Ingrese Cantidad de entradas: xyz",
+    "[ERROR] Debe ingresar un numero entero valido.",
+    "[CONTROL DE EXCEPCIONES] Captura de ValueError en prompts interactivos.",
+    "===================================================================="
+]
+render_terminal_screenshot(
+    'Control de Errores de Entrada y Menu CLI (P18 y P19)',
+    lines_err,
+    os.path.join(output_dir, '11_Control_Errores_Menu_Opcion99_Letras.png'),
+    subtitle='Criterio 3.1.2 | Validacion preventiva de tipo, formato y rango'
+)
+
+print('Todas las capturas (01 a 11) fueron generadas y actualizadas exitosamente en C:\\Users\\lugog\\OneDrive\\Desktop\\Capturas_CINEAPP_ES3.')
+

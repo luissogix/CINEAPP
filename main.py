@@ -1,5 +1,10 @@
 from datetime import datetime
 
+from dao.conexion import ConexionDB
+from dao.pelicula_dao import PeliculaDAO
+from dao.cliente_dao import ClienteDAO
+from dao.venta_dao import VentaDAO
+
 from model import (
     AsistenteDulceriaCine,
     Boletero,
@@ -22,19 +27,34 @@ from model import (
 class SistemaCineCLI:
     """
     Sistema Integral de Gestión y Ventas para Cine Estrella (CineApp).
-    Cumple con el Guion de Pruebas (P01-P19) y principios avanzados de POO:
+    Cumple con el Guion de Pruebas (P01-P19) y Rúbricas Sumativas N°2 y N°3:
     - Menú Principal navegable con control de errores (P01, P18, P19).
-    - CRUD completo de Películas y Funciones con Persistencia JSON (P02, P03, P04, P05, P06).
+    - Persistencia en base de datos SQLite con arquitectura DAO y consultas parametrizadas (Sumativa 3, Criterio 2.1.3).
+    - CRUD completo de Películas y Funciones (P02, P03, P04, P05, P06).
     - Validación matemática estricta de RUT con Módulo 11 (P07, P08).
     - Polimorfismo real en cálculo de tarifas 2D, 3D y VIP (P09, P10, P11).
     - Transacción unificada de venta (entradas + dulcería) y consulta de detalles (P12, P13).
     - Reglas de negocio protegidas con excepciones de dominio (P14: SalaLlenaError, P15: EdadInsuficienteError).
-    - Integración dinámica con API oficial mindicador.cl y contingencia sin internet (P16, P17).
+    - Integración dinámica con API oficial mindicador.cl vía 'requests' con timeout y contingencia (P16, P17).
     """
 
     def __init__(self):
-        # 1. Cargar persistencia de datos (Películas)
-        self.peliculas = GestorPersistencia.cargar_peliculas()
+        # 1. Inicializar Base de Datos SQLite y Tablas del negocio (Criterio 2.1.3)
+        ConexionDB.inicializar_tablas()
+
+        # 2. Cargar Películas desde SQLite vía PeliculaDAO (con catálogo base si está vacía)
+        peliculas_defecto = [
+            Pelicula("P-001", "IntensaMente 2", 96, "TE", 0),
+            Pelicula("P-002", "Mi Villano Favorito 4", 94, "TE", 0),
+            Pelicula("P-003", "Deadpool & Wolverine", 128, "+18", 18),
+            Pelicula("P-004", "Alien: Romulus", 119, "+14", 14),
+            Pelicula("P-005", "Beetlejuice Beetlejuice", 104, "+14", 14),
+        ]
+        PeliculaDAO.inicializar_catalogo_defecto(peliculas_defecto)
+        self.peliculas = PeliculaDAO.obtener_todas()
+        
+        # Sincronización secundaria en JSON para compatibilidad dual
+        GestorPersistencia.guardar_peliculas(self.peliculas)
         self.ventas_realizadas = []
 
         # 2. Inicializar Salas (1-5: 2D, 6-8: 3D, 9-10: VIP con aforo exclusivo)
@@ -181,8 +201,9 @@ class SistemaCineCLI:
         nueva_peli = Pelicula(nuevo_id, titulo, duracion, clasif)
 
         self.peliculas.append(nueva_peli)
+        PeliculaDAO.insertar(nueva_peli)
         GestorPersistencia.guardar_peliculas(self.peliculas)
-        print(f"\n[OK] El programa confirma que se guardo la pelicula '{nueva_peli.titulo}' ({nueva_peli.clasificacion}) con ID {nueva_peli.id_pelicula}.")
+        print(f"\n[OK] El programa confirma que se guardo la pelicula '{nueva_peli.titulo}' ({nueva_peli.clasificacion}) con ID {nueva_peli.id_pelicula} en SQLite vía PeliculaDAO.")
 
     def _modificar_pelicula(self):
         """P04: Modificar película: cambiar clasificación y listar."""
@@ -211,8 +232,9 @@ class SistemaCineCLI:
             return
 
         pelicula.clasificacion = nueva_clasif
+        PeliculaDAO.actualizar(pelicula)
         GestorPersistencia.guardar_peliculas(self.peliculas)
-        print(f"[OK] Modificacion guardada con exito. Nueva clasificacion: {pelicula.clasificacion}")
+        print(f"[OK] Modificacion guardada con exito en SQLite vía PeliculaDAO. Nueva clasificacion: {pelicula.clasificacion}")
         print("\nListado actualizado con el cambio:")
         self._listar_peliculas()
 
@@ -236,8 +258,9 @@ class SistemaCineCLI:
             except ValueError:
                 print("[ERROR] Ingrese un numero valido.")
 
+        PeliculaDAO.eliminar(pelicula_borrada.id_pelicula)
         GestorPersistencia.guardar_peliculas(self.peliculas)
-        print(f"[OK] Pelicula '{pelicula_borrada.titulo}' eliminada con exito.")
+        print(f"[OK] Pelicula '{pelicula_borrada.titulo}' eliminada con exito de SQLite vía PeliculaDAO.")
         print("\nListado actualizado:")
         self._listar_peliculas()
 
@@ -510,8 +533,11 @@ class SistemaCineCLI:
             "comprobante": comprobante
         }
         self.ventas_realizadas.append(registro_venta)
+        
+        # Persistencia en SQLite vía VentaDAO (Transacción atómica con detalles)
+        VentaDAO.registrar_transaccion(venta)
         GestorPersistencia.guardar_venta_registro(registro_venta)
-        print(f"[OK] Venta registrada con folio {venta.id_venta} en almacenamiento persistente.")
+        print(f"[OK] Venta registrada con folio {venta.id_venta} en base de datos SQLite vía VentaDAO (transacción con líneas de detalle).")
 
     def _solicitar_cliente(self):
         """Solicita cliente y valida RUT con Módulo 11 (P07, P08, P19)."""
@@ -546,19 +572,25 @@ class SistemaCineCLI:
                 print(f"[ERROR] {e} Intente nuevamente.")
 
     # -------------------------------------------------------------------------
-    # P13: CONSULTAR DETALLE DE VENTA
+    # P13: CONSULTAR DETALLE DE VENTA DESDE BASE DE DATOS SQLITE (DAO)
     # -------------------------------------------------------------------------
     def _consultar_ventas(self):
-        ventas_totales = GestorPersistencia.cargar_ventas()
+        ventas_bd = VentaDAO.obtener_historial_ventas()
         print("\n" + "=" * 65)
-        print("             HISTORIAL Y DETALLE DE VENTAS")
+        print("    HISTORIAL Y DETALLE DE VENTAS (BASE DE DATOS SQLITE / DAO)")
         print("=" * 65)
-        if not ventas_totales:
+        if not ventas_bd:
+            # Fallback a persistencia local si aún no hay ventas en SQLite
+            ventas_bd = GestorPersistencia.cargar_ventas()
+
+        if not ventas_bd:
             print(" [!] No hay ventas registradas en el sistema.")
             return
 
-        for idx, v in enumerate(ventas_totales, 1):
-            print(f" [{idx}] Folio: {v['id_venta']} | Fecha: {v['fecha'][:19]} | Cliente: {v['cliente']['nombre']} (RUT: {v['cliente']['rut']}) | Total: ${v['total']:,.0f} CLP")
+        for idx, v in enumerate(ventas_bd, 1):
+            rut = v.get('rut_cliente') or (v.get('cliente', {}).get('rut') if isinstance(v.get('cliente'), dict) else "N/A")
+            nom = v.get('nombre_cliente') or (v.get('cliente', {}).get('nombre') if isinstance(v.get('cliente'), dict) else "Cliente")
+            print(f" [{idx}] Folio: {v['id_venta']} | Fecha: {str(v['fecha'])[:19]} | Cliente: {nom} ({rut}) | Total: ${v['total']:,.0f} CLP")
 
         while True:
             sel = input("\nIngrese el N° de la venta que desea ver en detalle (o '0' para salir): ").strip()
@@ -566,13 +598,23 @@ class SistemaCineCLI:
                 break
             try:
                 num = int(sel)
-                if 1 <= num <= len(ventas_totales):
-                    v_sel = ventas_totales[num - 1]
-                    print("\n" + "-" * 60)
-                    print(f"DETALLE COMPLETO DE VENTA {v_sel['id_venta']}:")
-                    print("-" * 60)
-                    print(v_sel.get("comprobante", "Sin comprobante de texto guardado."))
-                    print("-" * 60)
+                if 1 <= num <= len(ventas_bd):
+                    v_sel = ventas_bd[num - 1]
+                    folio = v_sel['id_venta']
+                    detalle_completo = VentaDAO.obtener_venta_con_detalles(folio)
+                    print("\n" + "-" * 65)
+                    print(f"DETALLE COMPLETO DE VENTA {folio} DESDE SQLITE (TABLA 'detalles_venta'):")
+                    print("-" * 65)
+                    if detalle_completo and detalle_completo.get("detalles"):
+                        print(f"Cliente: {detalle_completo['nombre_cliente']} (RUT: {detalle_completo['rut_cliente']}, Edad: {detalle_completo['edad_cliente']} años)")
+                        print(f"Fecha de Transacción: {detalle_completo['fecha']}")
+                        print("\nLÍNEAS DE DETALLE GUARDADAS EN BASE DE DATOS:")
+                        for d in detalle_completo["detalles"]:
+                            print(f"  • [{d['tipo_item']}] {d['descripcion']} | Cant: {d['cantidad']} | P.Unit: ${d['precio_unitario']:,.0f} | Subtotal: ${d['subtotal']:,.0f} CLP")
+                        print(f"\nTOTAL GENERAL TRANSACCIÓN: ${detalle_completo['total']:,.0f} CLP")
+                    else:
+                        print(v_sel.get("comprobante", "Sin comprobante guardado."))
+                    print("-" * 65)
                     break
                 print("[ATENCION] Numero no valido.")
             except ValueError:

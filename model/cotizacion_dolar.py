@@ -19,35 +19,49 @@ class CotizacionDolar:
         self._origen = origen
 
     @classmethod
-    def obtener_cotizacion_del_dia(cls, timeout: int = 3):
+    def obtener_cotizacion_del_dia(cls, timeout: int = 5):
         """
-        Consulta la API de mindicador.cl para obtener el valor del dólar en tiempo real.
-        Si no hay conexión a internet o el servicio no responde, aplica fallback sin caerse.
+        Consulta la API pública de mindicador.cl mediante la librería 'requests'
+        para obtener el valor oficial del dólar en tiempo real.
+        Define un tiempo límite (timeout) y maneja caídas, demoras o respuestas
+        inesperadas aplicando un valor de respaldo para garantizar continuidad (Criterios 3.1.1 y 3.1.3).
         """
         url = "https://mindicador.cl/api/dolar"
-        req = urllib.request.Request(
-            url,
-            headers={
+        
+        try:
+            import requests
+            headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CineApp/1.0",
                 "Accept": "application/json"
             }
-        )
-        
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
+            response = requests.get(url, headers=headers, timeout=timeout)
+            
+            if response.status_code == 200:
+                data = response.json()
+                serie = data.get("serie", [])
+                if serie:
+                    valor_hoy = float(serie[0]["valor"])
+                    fecha_str = str(serie[0].get("fecha", date.today()))[:10]
+                    print(f"[OK API] Cotización del dólar obtenida en vivo vía requests ({url}): ${valor_hoy:,.2f} CLP (Fecha: {fecha_str})")
+                    return cls(valor_hoy, fecha_actualizacion=fecha_str, origen="mindicador.cl (en vivo)")
+                else:
+                    print(f"[ADVERTENCIA API] Respuesta inesperada: no se encontró la serie de datos en {url}.")
+            else:
+                print(f"[ADVERTENCIA API] Respuesta HTTP con código de estado inesperado: {response.status_code}.")
 
-        try:
-            with urllib.request.urlopen(req, timeout=timeout, context=ctx) as response:
-                data = json.loads(response.read().decode("utf-8"))
-                valor_hoy = float(data["serie"][0]["valor"])
-                fecha_str = data["serie"][0].get("fecha", str(date.today()))[:10]
-                print(f"[OK] Cotización del dólar obtenida en vivo desde {url}: ${valor_hoy:,.2f} CLP (Fecha: {fecha_str})")
-                return cls(valor_hoy, fecha_actualizacion=fecha_str, origen="mindicador.cl (en vivo)")
         except Exception as e:
-            print(f"[ADVERTENCIA] No fue posible conectar con {url} ({type(e).__name__}).")
-            print(f"[CONTINGENCIA] Usando valor de respaldo referencial: ${cls.VALOR_RESPALDO:,.2f} CLP.")
-            return cls(cls.VALOR_RESPALDO, fecha_actualizacion=date.today(), origen="Respaldo referencial (sin internet)")
+            # Captura de Timeout, ConnectionError o fallas de red
+            error_tipo = type(e).__name__
+            if "Timeout" in error_tipo:
+                print(f"[ADVERTENCIA API] Tiempo máximo de espera agotado ({timeout}s) al consultar {url}.")
+            elif "Connection" in error_tipo:
+                print(f"[ADVERTENCIA API] Sin conexión a internet o endpoint inalcanzable ({url}).")
+            else:
+                print(f"[ADVERTENCIA API] Error al consultar servicio externo ({error_tipo}): {e}")
+
+        # Mecanismo de contingencia defensivo: continuidad y estabilidad del sistema
+        print(f"[CONTINGENCIA API] Aplicando valor de respaldo referencial: ${cls.VALOR_RESPALDO:,.2f} CLP.")
+        return cls(cls.VALOR_RESPALDO, fecha_actualizacion=date.today(), origen="Respaldo referencial (modo contingencia)")
 
     @property
     def valor_dolar_del_dia(self):

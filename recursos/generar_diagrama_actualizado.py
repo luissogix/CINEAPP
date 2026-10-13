@@ -213,7 +213,8 @@ PALETTE = {
     "error2":   {"bg": (55, 35, 15), "border": (245, 158, 11), "text": (254, 243, 199), "accent": (251, 191, 36)},
     "dolar":    {"bg": (20, 50, 30), "border": (34, 197, 94), "text": (220, 252, 231), "accent": (74, 222, 128)},
     "sala":     {"bg": (40, 20, 50), "border": (217, 70, 239), "text": (250, 232, 255), "accent": (240, 171, 252)},
-    "persistencia": {"bg": (20, 35, 55), "border": (56, 189, 248), "text": (240, 249, 255), "accent": (125, 211, 252)},
+    "dao":      {"bg": (15, 30, 50), "border": (56, 189, 248), "text": (240, 249, 255), "accent": (125, 211, 252)},
+    "db":       {"bg": (30, 28, 15), "border": (234, 179, 8),  "text": (254, 249, 195), "accent": (250, 204, 21)},
 }
 
 def draw_class_box(x, y, w, h, title, meta, attrs, methods, theme):
@@ -328,10 +329,30 @@ draw_class_box(940, 975, 290, 135, "CotizacionDolar", None,
                ["- _valor_dolar_del_dia: float", "- _fecha_actualizacion: date", "- _origen: str", "+ VALOR_RESPALDO = 950.0"],
                ["+ obtener_cotizacion_del_dia(): Cotiz", "+ get_valor_dolar(): float", "+ actualizar_valor(val, fecha): void"], "dolar")
 
-# 9. GestorPersistencia (Persistencia JSON P05)
-draw_class_box(1260, 975, 310, 135, "GestorPersistencia", None,
-               ["+ ARCHIVO_DATOS = datos_cine.json"],
-               ["+ cargar_peliculas(): list[Pelicula]", "+ guardar_peliculas(lista): void", "+ cargar_ventas(): list", "+ guardar_venta_registro(dict): void"], "persistencia")
+# 9. Capa DAO y Persistencia SQLite (Sumativa 3 - Criterio 2.1.3)
+# Paquete dao/
+draw.rounded_rectangle([1230, 950, 2180, 1310], radius=8, fill=(15, 23, 42), outline=(56, 189, 248), width=2)
+draw.text((1245, 960), "PAQUETE: dao/ (Persistencia SQLite con Consultas Parametrizadas '?')", fill=(56, 189, 248), font=f_box_h)
+
+draw_class_box(1245, 990, 275, 135, "ConexionDB", None,
+               ["+ DB_NAME = 'cineapp.db'"],
+               ["+ get_db_path(): str", "+ obtener_conexion(): Connection", "+ inicializar_tablas(): void"], "dao")
+
+draw_class_box(1535, 990, 305, 155, "PeliculaDAO", None,
+               [],
+               ["+ insertar(p): bool [?]", "+ obtener_todas(): list[Pelicula]", "+ obtener_por_id(id): Pelicula [?]", "+ actualizar(p): bool [?]", "+ eliminar(id): bool [?]"], "dao")
+
+draw_class_box(1855, 990, 310, 155, "VentaDAO", None,
+               [],
+               ["+ registrar_transaccion(v): bool [?]", "+ obtener_historial_ventas(): list", "+ obtener_venta_con_detalles(id): dict"], "dao")
+
+draw_class_box(1245, 1145, 275, 120, "ClienteDAO", None,
+               [],
+               ["+ guardar_o_actualizar(c): bool [?]", "+ obtener_por_rut(rut): Cliente [?]"], "dao")
+
+draw_class_box(1535, 1165, 630, 115, "Base de Datos SQLite (cineapp.db)", "<<SQLite 3 Engine>>",
+               ["• Integridad: PRAGMA foreign_keys = ON", "• Tablas: peliculas, clientes, ventas, detalles_venta"],
+               ["• Seguridad: 100% Consultas Parametrizadas (?) | Atomicidad con transacciones"], "db")
 
 # 10. Excepciones
 draw_class_box(40, 485, 240, 95, "EdadInsuficienteError", "<<Exception>> [Regla 1]",
@@ -419,7 +440,7 @@ draw.text((45, 1210), "• Visibilidad: (-) Privado | (+) Público | (*) Abstrac
 draw.text((45, 1228), "• Relaciones: Herencia (◄—), Composición (♦—), Agregación (◇—), Uso (- - -►)", fill=(212, 212, 216), font=f_box_meta)
 draw.text((45, 1246), "• Regla 1: Boletero.validar_venta() lanza EdadInsuficienteError (P15)", fill=(248, 113, 113), font=f_box_meta)
 draw.text((45, 1264), "• Regla 2: Funcion.ocupar_asiento() lanza SalaLlenaError (P14)", fill=(251, 191, 36), font=f_box_meta)
-draw.text((45, 1282), "• Persistencia: GestorPersistencia serializa en datos_cine.json (P05)", fill=(125, 211, 252), font=f_box_meta)
+draw.text((45, 1282), "• Persistencia: Capa DAO (SQLite) con consultas parametrizadas (?) y transacciones atómicas", fill=(56, 189, 248), font=f_box_meta)
 
 output_png = r'C:\Users\lugog\OneDrive\Desktop\CINEAPP\Diagrama actualizado.png'
 png_info = PngImagePlugin.PngInfo()
