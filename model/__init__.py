@@ -20,6 +20,4 @@ from model.venta import Venta
 from model.servicio_cartelera_api import ServicioCarteleraAPI
 from model.sala import Sala
 from model.asistente_dulceria import AsistenteDulceriaCine
-
-
-
+from model.persistencia import GestorPersistencia

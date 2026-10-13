@@ -1,0 +1,168 @@
+<mxfile host="app.diagrams.net" agent="Antigravity AI" scale="1" border="0">
+  <diagram id="cineapp-uml-class" name="Diagrama de Clases CINEAPP">
+    <mxGraphModel dx="3757" dy="2338" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="1450" background="#121212" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- TITULO -->
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#F8FAFC;" value="DIAGRAMA DE CLASES UML - CINEAPP (POO SEGURO - SISTEMA ACTUALIZADO)" vertex="1">
+          <mxGeometry height="40" width="800" x="750" y="30" as="geometry" />
+        </mxCell>
+
+        <!-- EMPLEADO -->
+        <mxCell id="Empleado" parent="1" style="swipeable=0;html=1;fillColor=#1E1E2E;strokeColor=#6366F1;fontColor=#E2E8F0;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;&amp;lt;&amp;lt;Abstract&amp;gt;&amp;gt;&lt;br&gt;Empleado&lt;/B&gt;&lt;hr&gt;- _id_empleado: str&lt;br&gt;- _nombre: str&lt;br&gt;- _rut: str&lt;hr&gt;+ id_empleado(): str&lt;br&gt;+ nombre(): str&lt;br&gt;+ rut(): str&lt;br&gt;+ &lt;i&gt;get_rol()&lt;/i&gt;: str" vertex="1">
+          <mxGeometry height="150" width="220" x="180" y="100" as="geometry" />
+        </mxCell>
+
+        <!-- BOLETERO -->
+        <mxCell id="Boletero" parent="1" style="swipeable=0;html=1;fillColor=#1E1E2E;strokeColor=#6366F1;fontColor=#E2E8F0;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Boletero&lt;/B&gt;&lt;hr&gt;- _modulo_caja: str&lt;hr&gt;+ modulo_caja(): str&lt;br&gt;+ get_rol(): str&lt;br&gt;+ validar_venta(cliente, funcion): bool&lt;br&gt;+ emitir_entrada(cliente, funcion, asiento): Entrada" vertex="1">
+          <mxGeometry height="150" width="340" x="30" y="320" as="geometry" />
+        </mxCell>
+
+        <!-- ENCARGADO DULCERIA -->
+        <mxCell id="EncargadoDulceria" parent="1" style="swipeable=0;html=1;fillColor=#1E1E2E;strokeColor=#6366F1;fontColor=#E2E8F0;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;EncargadoDulceria&lt;/B&gt;&lt;hr&gt;- _turno: str&lt;hr&gt;+ turno(): str&lt;br&gt;+ get_rol(): str&lt;br&gt;+ registrar_venta_dulceria(venta, prod, cant): DetalleVenta" vertex="1">
+          <mxGeometry height="150" width="370" x="390" y="320" as="geometry" />
+        </mxCell>
+
+        <!-- HERENCIA EMPLEADO -->
+        <mxCell id="h1" edge="1" parent="1" source="Boletero" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#818CF8;strokeWidth=2;" target="Empleado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h2" edge="1" parent="1" source="EncargadoDulceria" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#818CF8;strokeWidth=2;" target="Empleado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CLIENTE (ACTUALIZADO: VALIDACIÓN RUT MODULO 11) -->
+        <mxCell id="Cliente" parent="1" style="swipeable=0;html=1;fillColor=#142E1F;strokeColor=#22C55E;fontColor=#DCFCE7;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Cliente&lt;/B&gt;&lt;hr&gt;- _rut: str&lt;br&gt;- _nombre: str&lt;br&gt;- _edad: int&lt;hr&gt;+ rut(): str / setter [valida M&amp;oacute;dulo 11]&lt;br&gt;+ validar_rut(rut_str): bool [static]&lt;br&gt;+ nombre(): str / setter [valida non-empty]&lt;br&gt;+ edad(): int / setter [valida 0..120]" vertex="1">
+          <mxGeometry height="170" width="330" x="830" y="90" as="geometry" />
+        </mxCell>
+
+        <!-- PELICULA (ACTUALIZADO: CLASIFICACION SETTER Y DICT) -->
+        <mxCell id="Pelicula" parent="1" style="swipeable=0;html=1;fillColor=#2E2010;strokeColor=#F59E0B;fontColor=#FEF3C7;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Pelicula&lt;/B&gt;&lt;hr&gt;- _id_pelicula: str&lt;br&gt;- _titulo: str&lt;br&gt;- _duracion_minutos: int&lt;br&gt;- _clasificacion: str&lt;br&gt;- _edad_minima: int&lt;hr&gt;+ id_pelicula(): str&lt;br&gt;+ titulo(): str / setter&lt;br&gt;+ duracion_minutos(): int / setter&lt;br&gt;+ clasificacion(): str / setter [autocalcula]&lt;br&gt;+ edad_minima(): int / setter&lt;br&gt;+ es_apta_para(edad_cliente): bool&lt;br&gt;+ to_dict(): dict / from_dict(): Pelicula" vertex="1">
+          <mxGeometry height="220" width="300" x="1440" y="80" as="geometry" />
+        </mxCell>
+
+        <!-- FUNCION -->
+        <mxCell id="Funcion" parent="1" style="swipeable=0;html=1;fillColor=#1E1E2E;strokeColor=#6366F1;fontColor=#E2E8F0;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;&amp;lt;&amp;lt;Abstract&amp;gt;&amp;gt;&lt;br&gt;Funcion&lt;/B&gt;&lt;hr&gt;- _id_funcion: str&lt;br&gt;- _horario: datetime&lt;br&gt;- _pelicula: Pelicula&lt;br&gt;- _precio_base: float&lt;br&gt;- _capacidad_total: int&lt;br&gt;- _asientos_vendidos: int&lt;hr&gt;+ id_funcion(): str&lt;br&gt;+ horario(): datetime&lt;br&gt;+ pelicula(): Pelicula&lt;br&gt;+ precio_base(): float / setter&lt;br&gt;+ capacidad_total(): int / setter&lt;br&gt;+ &lt;i&gt;calcular_precio()&lt;/i&gt;: float&lt;br&gt;+ hay_asientos_disponibles(): bool&lt;br&gt;+ ocupar_asiento(): void [throws SalaLlenaError]" vertex="1">
+          <mxGeometry height="240" width="340" x="1410" y="350" as="geometry" />
+        </mxCell>
+
+        <!-- AGREGACION FUNCION - PELICULA -->
+        <mxCell id="agg1" edge="1" parent="1" source="Funcion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;startArrow=diamond;startFill=0;strokeColor=#F59E0B;strokeWidth=2;" target="Pelicula" value="1..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- SUBTIPOS FUNCION -->
+        <mxCell id="Funcion2D" parent="1" style="swipeable=0;html=1;fillColor=#1E1E2E;strokeColor=#6366F1;fontColor=#E2E8F0;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Funcion2D&lt;/B&gt;&lt;hr&gt;+ descuento: float&lt;hr&gt;+ calcular_precio(): float" vertex="1">
+          <mxGeometry height="80" width="180" x="1485" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="Funcion3D" parent="1" style="swipeable=0;html=1;fillColor=#1E1E2E;strokeColor=#6366F1;fontColor=#E2E8F0;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Funcion3D&lt;/B&gt;&lt;hr&gt;+ recargo_3d: float&lt;hr&gt;+ calcular_precio(): float" vertex="1">
+          <mxGeometry height="80" width="180" x="1275" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="FuncionVIP" parent="1" style="swipeable=0;html=1;fillColor=#1E1E2E;strokeColor=#6366F1;fontColor=#E2E8F0;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;FuncionVIP&lt;/B&gt;&lt;hr&gt;+ recargo_vip: float&lt;hr&gt;+ calcular_precio(): float" vertex="1">
+          <mxGeometry height="80" width="180" x="1695" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="h3" edge="1" parent="1" source="Funcion2D" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#818CF8;strokeWidth=2;" target="Funcion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h4" edge="1" parent="1" source="Funcion3D" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#818CF8;strokeWidth=2;" target="Funcion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h5" edge="1" parent="1" source="FuncionVIP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#818CF8;strokeWidth=2;" target="Funcion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- SALA (AFORO Y BUTACAS VIP) -->
+        <mxCell id="Sala" parent="1" style="swipeable=0;html=1;fillColor=#2A1E35;strokeColor=#D946EF;fontColor=#FAE8FF;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Sala&lt;/B&gt;&lt;hr&gt;+ numero_sala: int&lt;br&gt;+ formato: str [2D/3D/VIP]&lt;br&gt;+ capacidad: int [VIP: 4]&lt;br&gt;+ asientos: dict&lt;hr&gt;+ esta_disponible(asiento): bool&lt;br&gt;+ ocupar_asiento(asiento): bool&lt;br&gt;+ mostrar_mapa_asientos(): void" vertex="1">
+          <mxGeometry height="160" width="260" x="1800" y="370" as="geometry" />
+        </mxCell>
+
+        <!-- VENTA -->
+        <mxCell id="Venta" parent="1" style="swipeable=0;html=1;fillColor=#2E1022;strokeColor=#EC4899;fontColor=#FCE7F3;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Venta&lt;/B&gt;&lt;hr&gt;- _id_venta: str&lt;br&gt;- _fecha: datetime&lt;br&gt;- _cliente: Cliente&lt;br&gt;- _detalles: list&lt;hr&gt;+ id_venta(): str&lt;br&gt;+ fecha(): datetime&lt;br&gt;+ cliente(): Cliente&lt;br&gt;+ detalles(): tuple&lt;br&gt;+ total(): float&lt;br&gt;+ agregar_detalle(item, cantidad): DetalleVenta&lt;br&gt;+ calcular_total(): float&lt;br&gt;+ emitir_comprobante(): str" vertex="1">
+          <mxGeometry height="210" width="340" x="825" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="agg2" edge="1" parent="1" source="Venta" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;startArrow=diamond;startFill=0;strokeColor=#22C55E;strokeWidth=2;" target="Cliente" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DETALLE VENTA -->
+        <mxCell id="DetalleVenta" parent="1" style="swipeable=0;html=1;fillColor=#25103A;strokeColor=#A855F7;fontColor=#F3E8FF;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;DetalleVenta&lt;/B&gt;&lt;hr&gt;- _item: ItemVendible&lt;br&gt;- _cantidad: int&lt;br&gt;- _precio_unitario: float&lt;hr&gt;+ item(): ItemVendible&lt;br&gt;+ cantidad(): int / setter&lt;br&gt;+ precio_unitario(): float&lt;br&gt;+ calcular_subtotal(): float" vertex="1">
+          <mxGeometry height="150" width="250" x="870" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="comp1" edge="1" parent="1" source="Venta" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;startArrow=diamond;startFill=1;strokeColor=#EC4899;strokeWidth=2;" target="DetalleVenta" value="1..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ITEM VENDIBLE -->
+        <mxCell id="ItemVendible" parent="1" style="swipeable=0;html=1;fillColor=#1E293B;strokeColor=#94A3B8;fontColor=#F8FAFC;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;br&gt;ItemVendible&lt;/B&gt;&lt;hr&gt;+ &lt;i&gt;get_precio_unitario()&lt;/i&gt;: float&lt;br&gt;+ &lt;i&gt;get_descripcion()&lt;/i&gt;: str" vertex="1">
+          <mxGeometry height="90" width="240" x="520" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="agg3" edge="1" parent="1" source="DetalleVenta" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;startArrow=diamond;startFill=0;strokeColor=#A855F7;strokeWidth=2;" target="ItemVendible" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ENTRADA -->
+        <mxCell id="Entrada" parent="1" style="swipeable=0;html=1;fillColor=#1E293B;strokeColor=#94A3B8;fontColor=#F8FAFC;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;Entrada&lt;/B&gt;&lt;hr&gt;- _id_item: str&lt;br&gt;- _funcion: Funcion&lt;br&gt;- _asiento_asignado: str&lt;hr&gt;+ get_precio_unitario(): float&lt;br&gt;+ get_descripcion(): str" vertex="1">
+          <mxGeometry height="130" width="230" x="240" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="h6" edge="1" parent="1" source="Entrada" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#94A3B8;strokeWidth=2;" target="ItemVendible">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PRODUCTO DULCERIA -->
+        <mxCell id="ProductoDulceria" parent="1" style="swipeable=0;html=1;fillColor=#1E293B;strokeColor=#94A3B8;fontColor=#F8FAFC;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;&amp;lt;&amp;lt;Abstract&amp;gt;&amp;gt;&lt;br&gt;ProductoDulceria&lt;/B&gt;&lt;hr&gt;- _id_item: str&lt;br&gt;- _descripcion: str&lt;br&gt;- _stock: int&lt;hr&gt;+ hay_stock(cant): bool&lt;br&gt;+ descontar_stock(cant): void&lt;br&gt;+ &lt;i&gt;get_precio_unitario()&lt;/i&gt;: float" vertex="1">
+          <mxGeometry height="140" width="240" x="520" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="h7" edge="1" parent="1" source="ProductoDulceria" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#94A3B8;strokeWidth=2;" target="ItemVendible">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PRODUCTO NACIONAL -->
+        <mxCell id="ProductoNacional" parent="1" style="swipeable=0;html=1;fillColor=#1E293B;strokeColor=#38BDF8;fontColor=#F0F9FF;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;ProductoNacional&lt;/B&gt;&lt;hr&gt;- _precio_pesos: float&lt;hr&gt;+ precio_pesos(): float / setter&lt;br&gt;+ get_precio_unitario(): float" vertex="1">
+          <mxGeometry height="100" width="230" x="390" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="h8" edge="1" parent="1" source="ProductoNacional" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#38BDF8;strokeWidth=2;" target="ProductoDulceria">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PRODUCTO IMPORTADO -->
+        <mxCell id="ProductoImportado" parent="1" style="swipeable=0;html=1;fillColor=#1E293B;strokeColor=#38BDF8;fontColor=#F0F9FF;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;ProductoImportado&lt;/B&gt;&lt;hr&gt;- _precio_usd: float&lt;br&gt;- _cotizacion: CotizacionDolar [static]&lt;hr&gt;+ precio_usd(): float / setter&lt;br&gt;+ configurar_cotizacion(cotiz): void&lt;br&gt;+ get_precio_unitario(): float" vertex="1">
+          <mxGeometry height="130" width="260" x="650" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="h9" edge="1" parent="1" source="ProductoImportado" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;strokeColor=#38BDF8;strokeWidth=2;" target="ProductoDulceria">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- COTIZACION DOLAR (ACTUALIZADO: API MINDICADOR.CL + FALLBACK) -->
+        <mxCell id="CotizacionDolar" parent="1" style="swipeable=0;html=1;fillColor=#142E1F;strokeColor=#22C55E;fontColor=#DCFCE7;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;CotizacionDolar&lt;/B&gt;&lt;hr&gt;- _valor_dolar_del_dia: float&lt;br&gt;- _fecha_actualizacion: date&lt;br&gt;- _origen: str&lt;br&gt;+ VALOR_RESPALDO = 950.0&lt;hr&gt;+ obtener_cotizacion_del_dia(): Cotiz [API]&lt;br&gt;+ get_valor_dolar(): float&lt;br&gt;+ actualizar_valor(nuevo_val, fecha): void" vertex="1">
+          <mxGeometry height="145" width="290" x="950" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="dep1" edge="1" parent="1" source="ProductoImportado" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#22C55E;strokeWidth=2;" target="CotizacionDolar" value="&amp;laquo;use&amp;raquo;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- GESTOR PERSISTENCIA (NUEVO: ALMACENAMIENTO JSON P05) -->
+        <mxCell id="GestorPersistencia" parent="1" style="swipeable=0;html=1;fillColor=#1E293B;strokeColor=#38BDF8;fontColor=#F0F9FF;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=11;rounded=1;shadow=1;" value="&lt;B&gt;GestorPersistencia&lt;/B&gt;&lt;hr&gt;+ ARCHIVO_DATOS = datos_cine.json&lt;hr&gt;+ cargar_peliculas(): list[Pelicula]&lt;br&gt;+ guardar_peliculas(lista): void&lt;br&gt;+ cargar_ventas(): list&lt;br&gt;+ guardar_venta_registro(dict): void" vertex="1">
+          <mxGeometry height="145" width="280" x="1300" y="990" as="geometry" />
+        </mxCell>
+
+        <!-- EXCEPCIONES DE NEGOCIO -->
+        <mxCell id="EdadInsuficienteError" parent="1" style="swipeable=0;html=1;fillColor=#3B1212;strokeColor=#EF4444;fontColor=#FEE2E2;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=10;rounded=1;shadow=1;" value="&lt;B&gt;EdadInsuficienteError&lt;/B&gt;&lt;br&gt;&amp;lt;&amp;lt;Exception&amp;gt;&amp;gt; [Regla 1]&lt;hr&gt;+ edad_cliente: int&lt;br&gt;+ edad_minima: int&lt;br&gt;+ titulo: str" vertex="1">
+          <mxGeometry height="95" width="200" x="20" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="dep_ex1" edge="1" parent="1" source="Boletero" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#EF4444;strokeWidth=1;" target="EdadInsuficienteError" value="&amp;laquo;lanza&amp;raquo;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="SalaLlenaError" parent="1" style="swipeable=0;html=1;fillColor=#38240D;strokeColor=#F59E0B;fontColor=#FEF3C7;align=left;spacingLeft=8;verticalAlign=top;fontFamily=Consolas;fontSize=10;rounded=1;shadow=1;" value="&lt;B&gt;SalaLlenaError&lt;/B&gt;&lt;br&gt;&amp;lt;&amp;lt;Exception&amp;gt;&amp;gt; [Regla 2]&lt;hr&gt;+ id_funcion: str&lt;br&gt;+ capacidad_total: int" vertex="1">
+          <mxGeometry height="95" width="200" x="1190" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="dep_ex2" edge="1" parent="1" source="Funcion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#F59E0B;strokeWidth=1;" target="SalaLlenaError" value="&amp;laquo;lanza&amp;raquo;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

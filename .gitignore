@@ -1,3 +1,16 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Temporary / cache files
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
+
+# IDE and Editor configs
 .vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
