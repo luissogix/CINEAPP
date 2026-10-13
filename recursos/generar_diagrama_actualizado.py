@@ -218,6 +218,10 @@ PALETTE = {
 
 def draw_class_box(x, y, w, h, title, meta, attrs, methods, theme):
     col = PALETTE[theme]
+    # Auto-adjust height to fit all content cleanly
+    min_h = 8 + (14 if meta else 0) + 18 + 6 + (len(attrs) * 15) + (6 if attrs and methods else 0) + (len(methods) * 15) + 12
+    h = max(h, min_h)
+
     draw.rounded_rectangle([x+4, y+4, x+w+4, y+h+4], radius=6, fill=(10, 10, 10))
     draw.rounded_rectangle([x, y, x+w, y+h], radius=6, fill=col["bg"], outline=col["border"], width=2)
     
@@ -235,104 +239,106 @@ def draw_class_box(x, y, w, h, title, meta, attrs, methods, theme):
         draw.text((x + 10, curr_y), a, fill=col["text"], font=f_box_b)
         curr_y += 15
         
-    draw.line([(x+6, curr_y), (x+w-6, curr_y)], fill=col["border"], width=1)
-    curr_y += 6
+    if attrs and methods:
+        draw.line([(x+6, curr_y), (x+w-6, curr_y)], fill=col["border"], width=1)
+        curr_y += 6
     
     for m in methods:
         draw.text((x + 10, curr_y), m, fill=col["text"], font=f_box_b)
         curr_y += 15
+    return h
 
 # 1. Empleado y derivadas
-draw_class_box(180, 100, 220, 145, "Empleado", "<<Abstract>>",
-               ["- _id_empleado: str", "- _nombre: str", "- _rut: str"],
-               ["+ id_empleado(): str", "+ nombre(): str", "+ rut(): str", "+ get_rol(): str*"], "empleado")
+h_emp = draw_class_box(180, 80, 220, 165, "Empleado", "<<Abstract>>",
+                       ["- _id_empleado: str", "- _nombre: str", "- _rut: str"],
+                       ["+ id_empleado(): str", "+ nombre(): str", "+ rut(): str", "+ get_rol(): str*"], "empleado")
 
-draw_class_box(30, 290, 320, 130, "Boletero", None,
-               ["- _modulo_caja: str"],
-               ["+ modulo_caja(): str", "+ get_rol(): str", "+ validar_venta(cli, fun): bool", "+ emitir_entrada(cli, fun, asnt): Ent"], "empleado")
+h_bol = draw_class_box(30, 295, 320, 130, "Boletero", None,
+                       ["- _modulo_caja: str"],
+                       ["+ modulo_caja(): str", "+ get_rol(): str", "+ validar_venta(cli, fun): bool", "+ emitir_entrada(cli, fun, asnt): Ent"], "empleado")
 
-draw_class_box(380, 290, 340, 130, "EncargadoDulceria", None,
-               ["- _turno: str"],
-               ["+ turno(): str", "+ get_rol(): str", "+ registrar_venta_dulceria(v, p, c)"], "empleado")
+h_dul = draw_class_box(380, 295, 340, 130, "EncargadoDulceria", None,
+                       ["- _turno: str"],
+                       ["+ turno(): str", "+ get_rol(): str", "+ registrar_venta_dulceria(v, p, c)"], "empleado")
 
 # 2. Cliente (Actualizado con Módulo 11)
-draw_class_box(830, 90, 330, 160, "Cliente", None,
-               ["- _rut: str", "- _nombre: str", "- _edad: int"],
-               ["+ rut(): str / setter [valida Módulo 11]", "+ validar_rut(rut_str): bool [static]", "+ nombre(): str / setter [valida]", "+ edad(): int / setter [valida 0..120]"], "cliente")
+h_cli = draw_class_box(830, 80, 330, 165, "Cliente", None,
+                       ["- _rut: str", "- _nombre: str", "- _edad: int"],
+                       ["+ rut(): str / setter [valida Módulo 11]", "+ validar_rut(rut_str): bool [static]", "+ nombre(): str / setter [valida]", "+ edad(): int / setter [valida 0..120]"], "cliente")
 
 # 3. Película (Actualizado con clasificación setter y dict)
-draw_class_box(1440, 80, 300, 200, "Pelicula", None,
-               ["- _id_pelicula: str", "- _titulo: str", "- _duracion_minutos: int", "- _clasificacion: str", "- _edad_minima: int"],
-               ["+ id_pelicula(): str", "+ titulo(): str / setter", "+ duracion_minutos(): int/setter", "+ clasificacion(): str / setter [autocalc]", "+ edad_minima(): int/setter", "+ es_apta_para(edad): bool", "+ to_dict(): dict / from_dict(): Pelicula"], "pelicula")
+h_pel = draw_class_box(1440, 70, 300, 230, "Pelicula", None,
+                       ["- _id_pelicula: str", "- _titulo: str", "- _duracion_minutos: int", "- _clasificacion: str", "- _edad_minima: int"],
+                       ["+ id_pelicula(): str", "+ titulo(): str / setter", "+ duracion_minutos(): int/setter", "+ clasificacion(): str / setter [autocalc]", "+ edad_minima(): int/setter", "+ es_apta_para(edad): bool", "+ to_dict(): dict / from_dict(): Pelicula"], "pelicula")
 
 # 4. Función y derivadas
-draw_class_box(1410, 340, 340, 240, "Funcion", "<<Abstract>>",
-               ["- _id_funcion: str", "- _horario: datetime", "- _pelicula: Pelicula", "- _precio_base: float", "- _capacidad_total: int", "- _asientos_vendidos: int"],
-               ["+ id_funcion(): str", "+ horario(): datetime", "+ pelicula(): Pelicula", "+ precio_base(): float / setter", "+ capacidad_total(): int / setter", "+ calcular_precio(): float*", "+ hay_asientos_disponibles(): bool", "+ ocupar_asiento(): void [throws]"], "funcion")
+h_fun = draw_class_box(1410, 330, 340, 275, "Funcion", "<<Abstract>>",
+                       ["- _id_funcion: str", "- _horario: datetime", "- _pelicula: Pelicula", "- _precio_base: float", "- _capacidad_total: int", "- _asientos_vendidos: int"],
+                       ["+ id_funcion(): str", "+ horario(): datetime", "+ pelicula(): Pelicula", "+ precio_base(): float / setter", "+ capacidad_total(): int / setter", "+ calcular_precio(): float*", "+ hay_asientos_disponibles(): bool", "+ ocupar_asiento(): void [throws]"], "funcion")
 
-draw_class_box(1260, 645, 180, 80, "Funcion3D", None,
+draw_class_box(1260, 660, 180, 80, "Funcion3D", None,
                ["+ recargo_3d: float"],
                ["+ calcular_precio(): float"], "funcion")
 
-draw_class_box(1470, 645, 180, 80, "Funcion2D", None,
+draw_class_box(1470, 660, 180, 80, "Funcion2D", None,
                ["+ descuento: float"],
                ["+ calcular_precio(): float"], "funcion")
 
-draw_class_box(1680, 645, 180, 80, "FuncionVIP", None,
+draw_class_box(1680, 660, 180, 80, "FuncionVIP", None,
                ["+ recargo_vip: float"],
                ["+ calcular_precio(): float"], "funcion")
 
 # 5. Sala (Aforo VIP)
-draw_class_box(1800, 350, 260, 150, "Sala", None,
+draw_class_box(1800, 340, 260, 150, "Sala", None,
                ["+ numero_sala: int", "+ formato: str [2D/3D/VIP]", "+ capacidad: int [VIP: 4]", "+ asientos: dict"],
                ["+ esta_disponible(asiento): bool", "+ ocupar_asiento(asiento): bool", "+ mostrar_mapa_asientos(): void"], "sala")
 
 # 6. Venta y DetalleVenta
-draw_class_box(820, 320, 340, 205, "Venta", None,
-               ["- _id_venta: str", "- _fecha: datetime", "- _cliente: Cliente", "- _detalles: list"],
-               ["+ id_venta(): str", "+ fecha(): datetime", "+ cliente(): Cliente", "+ detalles(): tuple", "+ total(): float", "+ agregar_detalle(item, cant): Det", "+ calcular_total(): float", "+ emitir_comprobante(): str"], "venta")
+h_vta = draw_class_box(820, 305, 350, 245, "Venta", None,
+                       ["- _id_venta: str", "- _fecha: datetime", "- _cliente: Cliente", "- _detalles: list"],
+                       ["+ id_venta(): str", "+ fecha(): datetime", "+ cliente(): Cliente", "+ detalles(): tuple", "+ total(): float", "+ agregar_detalle(item, cant): Det", "+ calcular_total(): float", "+ emitir_comprobante(): str"], "venta")
 
-draw_class_box(865, 590, 250, 145, "DetalleVenta", None,
-               ["- _item: ItemVendible", "- _cantidad: int", "- _precio_unitario: float"],
-               ["+ item(): ItemVendible", "+ cantidad(): int / setter", "+ precio_unitario(): float", "+ calcular_subtotal(): float"], "detalle")
+h_det = draw_class_box(865, 605, 255, 155, "DetalleVenta", None,
+                       ["- _item: ItemVendible", "- _cantidad: int", "- _precio_unitario: float"],
+                       ["+ item(): ItemVendible", "+ cantidad(): int / setter", "+ precio_unitario(): float", "+ calcular_subtotal(): float"], "detalle")
 
 # 7. ItemVendible y derivadas
-draw_class_box(520, 610, 230, 90, "ItemVendible", "<<Interface>>",
-               [],
-               ["+ get_precio_unitario(): float*", "+ get_descripcion(): str*"], "item")
+h_itv = draw_class_box(520, 615, 230, 95, "ItemVendible", "<<Interface>>",
+                       [],
+                       ["+ get_precio_unitario(): float*", "+ get_descripcion(): str*"], "item")
 
-draw_class_box(240, 770, 230, 115, "Entrada", None,
+draw_class_box(240, 770, 230, 120, "Entrada", None,
                ["- _id_item: str", "- _funcion: Funcion", "- _asiento_asignado: str"],
                ["+ get_precio_unitario(): float", "+ get_descripcion(): str"], "item")
 
-draw_class_box(520, 770, 240, 140, "ProductoDulceria", "<<Abstract>>",
-               ["- _id_item: str", "- _descripcion: str", "- _stock: int"],
-               ["+ hay_stock(cant): bool", "+ descontar_stock(cant): void", "+ get_precio_unitario(): float*"], "item")
+h_pdl = draw_class_box(520, 770, 240, 140, "ProductoDulceria", "<<Abstract>>",
+                       ["- _id_item: str", "- _descripcion: str", "- _stock: int"],
+                       ["+ hay_stock(cant): bool", "+ descontar_stock(cant): void", "+ get_precio_unitario(): float*"], "item")
 
-draw_class_box(390, 970, 230, 95, "ProductoNacional", None,
+draw_class_box(390, 975, 230, 100, "ProductoNacional", None,
                ["- _precio_pesos: float"],
                ["+ precio_pesos(): float / setter", "+ get_precio_unitario(): float"], "item")
 
-draw_class_box(650, 970, 260, 125, "ProductoImportado", None,
+draw_class_box(650, 975, 260, 130, "ProductoImportado", None,
                ["- _precio_usd: float", "- _cotizacion: Cotizacion [static]"],
                ["+ precio_usd(): float / setter", "+ configurar_cotizacion(cot): void", "+ get_precio_unitario(): float"], "item")
 
 # 8. Cotización Dólar Oficial (mindicador.cl)
-draw_class_box(940, 970, 290, 135, "CotizacionDolar", None,
+draw_class_box(940, 975, 290, 135, "CotizacionDolar", None,
                ["- _valor_dolar_del_dia: float", "- _fecha_actualizacion: date", "- _origen: str", "+ VALOR_RESPALDO = 950.0"],
                ["+ obtener_cotizacion_del_dia(): Cotiz", "+ get_valor_dolar(): float", "+ actualizar_valor(val, fecha): void"], "dolar")
 
 # 9. GestorPersistencia (Persistencia JSON P05)
-draw_class_box(1260, 970, 310, 135, "GestorPersistencia", None,
+draw_class_box(1260, 975, 310, 135, "GestorPersistencia", None,
                ["+ ARCHIVO_DATOS = datos_cine.json"],
                ["+ cargar_peliculas(): list[Pelicula]", "+ guardar_peliculas(lista): void", "+ cargar_ventas(): list", "+ guardar_venta_registro(dict): void"], "persistencia")
 
 # 10. Excepciones
-draw_class_box(40, 480, 240, 90, "EdadInsuficienteError", "<<Exception>> [Regla 1]",
+draw_class_box(40, 485, 240, 95, "EdadInsuficienteError", "<<Exception>> [Regla 1]",
                ["+ edad_cliente: int", "+ edad_minima: int", "+ titulo: str"],
                [], "error1")
 
-draw_class_box(1180, 440, 200, 80, "SalaLlenaError", "<<Exception>> [Regla 2]",
+draw_class_box(1175, 435, 205, 80, "SalaLlenaError", "<<Exception>> [Regla 2]",
                ["+ id_funcion: str", "+ capacidad_total: int"],
                [], "error2")
 
@@ -350,61 +356,61 @@ def draw_line(p1, p2, color=(148, 163, 184), width=2, dashed=False):
             draw.line([(x1 + (x2-x1)*t1, y1 + (y2-y1)*t1), (x1 + (x2-x1)*t2, y1 + (y2-y1)*t2)], fill=color, width=width)
 
 # Herencia Empleado
-draw_line((190, 290), (190, 265), color=(129, 140, 248))
-draw_line((550, 290), (550, 265), color=(129, 140, 248))
-draw_line((190, 265), (550, 265), color=(129, 140, 248))
-draw_line((290, 265), (290, 245), color=(129, 140, 248))
-draw.polygon([(290, 245), (284, 257), (296, 257)], outline=(129, 140, 248), fill=(18, 18, 18))
+draw_line((190, 295), (190, 270), color=(129, 140, 248))
+draw_line((550, 295), (550, 270), color=(129, 140, 248))
+draw_line((190, 270), (550, 270), color=(129, 140, 248))
+draw_line((290, 270), (290, 80 + h_emp), color=(129, 140, 248))
+draw.polygon([(290, 80 + h_emp), (284, 80 + h_emp + 12), (296, 80 + h_emp + 12)], outline=(129, 140, 248), fill=(18, 18, 18))
 
 # Herencia Funciones
-draw_line((1350, 645), (1350, 615), color=(129, 140, 248))
-draw_line((1560, 645), (1560, 615), color=(129, 140, 248))
-draw_line((1770, 645), (1770, 615), color=(129, 140, 248))
-draw_line((1350, 615), (1770, 615), color=(129, 140, 248))
-draw_line((1560, 615), (1560, 580), color=(129, 140, 248))
-draw.polygon([(1560, 580), (1554, 592), (1566, 592)], outline=(129, 140, 248), fill=(18, 18, 18))
+draw_line((1350, 660), (1350, 635), color=(129, 140, 248))
+draw_line((1560, 660), (1560, 635), color=(129, 140, 248))
+draw_line((1770, 660), (1770, 635), color=(129, 140, 248))
+draw_line((1350, 635), (1770, 635), color=(129, 140, 248))
+draw_line((1560, 635), (1560, 330 + h_fun), color=(129, 140, 248))
+draw.polygon([(1560, 330 + h_fun), (1554, 330 + h_fun + 12), (1566, 330 + h_fun + 12)], outline=(129, 140, 248), fill=(18, 18, 18))
 
 # Herencia ItemVendible
-draw_line((355, 770), (355, 730), color=(148, 163, 184))
-draw_line((635, 770), (635, 730), color=(148, 163, 184))
-draw_line((355, 730), (635, 730), color=(148, 163, 184))
-draw_line((635, 730), (635, 700), color=(148, 163, 184))
-draw.polygon([(635, 700), (629, 712), (641, 712)], outline=(148, 163, 184), fill=(18, 18, 18))
+draw_line((355, 770), (355, 735), color=(148, 163, 184))
+draw_line((635, 770), (635, 735), color=(148, 163, 184))
+draw_line((355, 735), (635, 735), color=(148, 163, 184))
+draw_line((635, 735), (635, 615 + h_itv), color=(148, 163, 184))
+draw.polygon([(635, 615 + h_itv), (629, 615 + h_itv + 12), (641, 615 + h_itv + 12)], outline=(148, 163, 184), fill=(18, 18, 18))
 
 # Herencia ProductoDulceria
-draw_line((505, 970), (505, 940), color=(56, 189, 248))
-draw_line((780, 970), (780, 940), color=(56, 189, 248))
+draw_line((505, 975), (505, 940), color=(56, 189, 248))
+draw_line((780, 975), (780, 940), color=(56, 189, 248))
 draw_line((505, 940), (780, 940), color=(56, 189, 248))
-draw_line((640, 940), (640, 910), color=(56, 189, 248))
-draw.polygon([(640, 910), (634, 922), (646, 922)], outline=(56, 189, 248), fill=(18, 18, 18))
+draw_line((640, 940), (640, 770 + h_pdl), color=(56, 189, 248))
+draw.polygon([(640, 770 + h_pdl), (634, 770 + h_pdl + 12), (646, 770 + h_pdl + 12)], outline=(56, 189, 248), fill=(18, 18, 18))
 
 # Composición Venta -> DetalleVenta
-draw_line((990, 525), (990, 590), color=(236, 72, 153))
-draw.polygon([(990, 525), (984, 535), (990, 545), (996, 535)], fill=(236, 72, 153))
+draw_line((995, 305 + h_vta), (995, 605), color=(236, 72, 153))
+draw.polygon([(995, 305 + h_vta), (989, 305 + h_vta + 10), (995, 305 + h_vta + 20), (1001, 305 + h_vta + 10)], fill=(236, 72, 153))
 
 # Agregación Venta -> Cliente
-draw_line((990, 320), (990, 250), color=(34, 197, 94))
-draw.polygon([(990, 320), (984, 310), (990, 300), (996, 310)], outline=(34, 197, 94), fill=(18, 18, 18))
+draw_line((995, 305), (995, 80 + h_cli), color=(34, 197, 94))
+draw.polygon([(995, 305), (989, 295), (995, 285), (1001, 295)], outline=(34, 197, 94), fill=(18, 18, 18))
 
 # Agregación Funcion -> Pelicula
-draw_line((1580, 340), (1580, 280), color=(245, 158, 11))
-draw.polygon([(1580, 340), (1574, 330), (1580, 320), (1586, 330)], outline=(245, 158, 11), fill=(18, 18, 18))
+draw_line((1585, 330), (1585, 70 + h_pel), color=(245, 158, 11))
+draw.polygon([(1585, 330), (1579, 320), (1585, 310), (1591, 320)], outline=(245, 158, 11), fill=(18, 18, 18))
 
 # Agregación DetalleVenta -> ItemVendible
-draw_line((865, 655), (750, 655), color=(168, 85, 247))
-draw.polygon([(865, 655), (855, 649), (845, 655), (855, 661)], outline=(168, 85, 247), fill=(18, 18, 18))
+draw_line((865, 665), (750, 665), color=(168, 85, 247))
+draw.polygon([(865, 665), (855, 659), (845, 665), (855, 671)], outline=(168, 85, 247), fill=(18, 18, 18))
 
 # Dependencia «use» ProductoImportado -> CotizacionDolar
-draw_line((910, 1030), (940, 1030), color=(34, 197, 94), dashed=True)
-draw.polygon([(940, 1030), (930, 1025), (930, 1035)], fill=(34, 197, 94))
+draw_line((910, 1040), (940, 1040), color=(34, 197, 94), dashed=True)
+draw.polygon([(940, 1040), (930, 1035), (930, 1045)], fill=(34, 197, 94))
 
 # Dependencia «lanza» Boletero -> EdadInsuficienteError
-draw_line((150, 420), (150, 480), color=(239, 68, 68), dashed=True)
-draw.polygon([(150, 480), (145, 470), (155, 470)], fill=(239, 68, 68))
+draw_line((150, 295 + h_bol), (150, 485), color=(239, 68, 68), dashed=True)
+draw.polygon([(150, 485), (145, 475), (155, 475)], fill=(239, 68, 68))
 
 # Dependencia «lanza» Funcion -> SalaLlenaError
-draw_line((1410, 480), (1380, 480), color=(245, 158, 11), dashed=True)
-draw.polygon([(1380, 480), (1390, 475), (1390, 485)], fill=(245, 158, 11))
+draw_line((1410, 475), (1380, 475), color=(245, 158, 11), dashed=True)
+draw.polygon([(1380, 475), (1390, 470), (1390, 480)], fill=(245, 158, 11))
 
 # Leyenda
 draw.rounded_rectangle([30, 1180, 580, 1310], radius=6, fill=(24, 24, 27), outline=(63, 63, 70), width=1)
@@ -420,3 +426,4 @@ png_info = PngImagePlugin.PngInfo()
 png_info.add_text("mxfile", urllib.parse.quote(xml_content))
 img.save(output_png, 'PNG', pnginfo=png_info)
 print(f"Diagrama actualizado generado exitosamente en: {output_png}")
+

@@ -5,8 +5,8 @@
 **Desarrolladores**: Luis Lugo & Débora Sepúlveda  
 **Docente**: Michael Arjel  
 
-📄 **Informe Final PDF**: [`Informe_Sumativa2_CINEAPP.pdf`](Informe_Sumativa2_CINEAPP.pdf)  
-🖼️ **Diagrama de Clases UML**: [`Diagrama actualizado.png`](Diagrama%20actualizado.png)  
+🖼️ **Diagrama de Clases UML (Actualizado)**: [`Diagrama actualizado.png`](Diagrama%20actualizado.png)  
+🖼️ **Diagrama de Clases UML (Versión 1)**: [`Primer diagrama.png`](Primer%20diagrama.png)  
 
 ---
 
@@ -33,7 +33,9 @@ CINEAPP/
 ├── requirements.txt            # Dependencias del proyecto
 ├── README.md                   # Documentación oficial
 ├── datos_cine.json             # Almacenamiento persistente local (CRUD y Ventas)
-├── Diagrama actualizado.png     # Diagrama de Clases UML del sistema
+├── Diagrama actualizado.png     # Diagrama de Clases UML Actualizado (Sumativa 2)
+├── Primer diagrama.png         # Diagrama de Clases UML Inicial (Sumativa 1)
+├── recursos/                   # Fuentes de diagramas (.drawio/.xml) y generadores
 └── model/                      # Paquete con las clases del dominio
     ├── __init__.py             # Exposición de clases
     ├── cliente.py              # Cliente con validación de RUT (Módulo 11) y edad
